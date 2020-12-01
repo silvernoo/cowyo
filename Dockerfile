@@ -5,7 +5,7 @@ WORKDIR /go/cowyo
 COPY . .
 RUN make build
 
-FROM alpine:latest 
+FROM alpine:latest
 VOLUME /data
 EXPOSE 8050
 COPY --from=builder /go/cowyo/cowyo /cowyo
