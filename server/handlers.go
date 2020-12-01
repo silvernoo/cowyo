@@ -29,6 +29,7 @@ const minutesToUnlock = 10.0
 type Site struct {
 	PathToData      string
 	Css             []byte
+	CssFile         string
 	DefaultPage     string
 	DefaultPassword string
 	Debounce        int
@@ -89,6 +90,7 @@ func Serve(
 	router := Site{
 		PathToData:      filepathToData,
 		Css:             customCSS,
+		CssFile:         cssFile,
 		DefaultPage:     defaultPage,
 		DefaultPassword: defaultPassword,
 		Debounce:        debounce,
@@ -336,7 +338,11 @@ func (s *Site) handlePageRequest(c *gin.Context) {
 		filename := page + command
 		var data []byte
 		if filename == "static/css/custom.css" {
-			data = s.Css
+			file, err := ioutil.ReadFile(s.CssFile)
+			if err != nil {
+				c.String(http.StatusInternalServerError, "Could not find data")
+			}
+			data = file
 		} else {
 			var errAssset error
 			data, errAssset = Asset(filename)
